@@ -8,6 +8,14 @@ variables:
   - group: flask-app-secrets
 
 steps:
+- task: KubernetesManifest@1
+  inputs:
+    action: 'deploy'
+    connectionType: 'azureResourceManager'
+    azureSubscriptionConnection: 'AKS'
+    azureResourceGroup: '778b63be-terraform-rg'
+    kubernetesCluster: '778b63be-aks-cluster'
+    manifests: 'deployment.yaml'
 - task: Docker@2
   inputs:
     containerRegistry: 'Docker Hub'
