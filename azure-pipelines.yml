@@ -4,6 +4,9 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
+variables:
+  - group: flask-app-secrets
+
 steps:
 - task: Docker@2
   inputs:
@@ -12,3 +15,31 @@ steps:
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
     tags: 'latest'
+
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'AKS'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      # Install kubectl
+      az aks install-cli
+
+      # Get AKS credentials
+      az aks get-credentials --resource-group 778b63be-terraform-rg --name 778b63be-aks-cluster
+
+      #verify that kubectl is correctly configured to interact with your AKS cluster 
+      kubectl config current-context
+      kubectl get nodes
+
+      # Create Kubernetes secret
+      kubectl create secret generic flask-app-secrets \
+        --from-literal=DB_SERVER=$(DB_SERVER) \
+        --from-literal=<DB_DATABASE>=$(DB_DATABASE) \
+        --from-literal=<DB_PASSWORD>=$(DB_PASSWORD) \
+        --from-literal=<DB_USERNAME>=$(DB_USERNAME) \
+        --dry-run=client -o yaml > k8s-secret.yaml
+
+      # Apply the Kubernetes secret
+      kubectl apply -f k8s-secret.yaml
+  displayName: 'Create and Apply Kubernetes Secrets'
