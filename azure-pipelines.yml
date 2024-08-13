@@ -42,10 +42,10 @@ steps:
 
       # Create Kubernetes secret
       kubectl create secret generic flask-app-secrets \
-        --from-literal=DB_SERVER=$(DB_SERVER) \
-        --from-literal=DB_DATABASE=$(DB_DATABASE) \
-        --from-literal=DB_PASSWORD=$(DB_PASSWORD) \
-        --from-literal=DB_USERNAME=$(DB_USERNAME) \
+        --from-literal=db_server=$(DB_SERVER) \
+        --from-literal=db_database=$(DB_DATABASE) \
+        --from-literal=db_password=$(DB_PASSWORD) \
+        --from-literal=db_username=$(DB_USERNAME) \
         --dry-run=client -o yaml > k8s-secret.yaml
 
       # Apply the Kubernetes secret
