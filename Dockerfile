@@ -21,6 +21,6 @@ RUN pip install --upgrade pip setuptools
 
 RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
-EXPOSE 5000
+EXPOSE 5050
 
 CMD ["python", "app.py"]
